@@ -16,7 +16,7 @@ export const DEFAULT_LOC = {
 
 export function authOk(request, env) {
   const url = new URL(request.url);
-  const token = url.searchParams.get('token');
+  const token = url.searchParams.get('token') || url.searchParams.get('key');
   return !env.TOKEN || token === env.TOKEN;
 }
 
