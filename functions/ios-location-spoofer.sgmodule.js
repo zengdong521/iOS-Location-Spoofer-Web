@@ -24,7 +24,11 @@ export async function onRequestGet(context) {
   const host = request.headers.get('host') || url.host;
   const protocol = request.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
   const tVal = url.searchParams.get('token') || '';
-  const configKey = tVal ? await deriveConfigKey(tVal) : '';
+  // Shadowrocket may remove query credentials from a module's saved update URL.
+  // Generate the remote-config credential from the server-side token so module
+  // updates remain usable even when the client no longer sends ?token=.
+  const configToken = env.TOKEN || tVal;
+  const configKey = configToken ? await deriveConfigKey(configToken) : '';
 
   content = content.replace(/你的域名/g, host);
   content = content.replace(/你的Token/g, tVal);
