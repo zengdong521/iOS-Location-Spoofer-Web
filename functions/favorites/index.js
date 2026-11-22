@@ -11,7 +11,7 @@ import { authOk, jsonResponse, errorResponse, corsHeaders } from '../_utils.js';
 export async function onRequestGet(context) {
   const { request, env } = context;
 
-  if (!authOk(request, env)) {
+  if (!(await authOk(request, env))) {
     return errorResponse('unauthorized', 401);
   }
 
@@ -26,7 +26,7 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  if (!authOk(request, env)) {
+  if (!(await authOk(request, env))) {
     return errorResponse('unauthorized', 401);
   }
 

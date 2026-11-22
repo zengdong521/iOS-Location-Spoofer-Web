@@ -14,10 +14,21 @@ export const DEFAULT_LOC = {
   verticalAccuracy:   1000
 };
 
-export function authOk(request, env) {
+export async function deriveConfigKey(token) {
+  const bytes = new TextEncoder().encode(`ios-location-spoofer:${token}`);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+export async function authOk(request, env) {
   const url = new URL(request.url);
-  const token = url.searchParams.get('token') || url.searchParams.get('key');
-  return !env.TOKEN || token === env.TOKEN;
+  if (!env.TOKEN) return true;
+
+  const token = url.searchParams.get('token');
+  if (token === env.TOKEN) return true;
+
+  const key = url.searchParams.get('key');
+  return Boolean(key) && key === await deriveConfigKey(env.TOKEN);
 }
 
 export function jsonResponse(data, status = 200) {

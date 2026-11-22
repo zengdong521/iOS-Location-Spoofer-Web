@@ -11,7 +11,7 @@ import { DEFAULT_LOC, authOk, jsonResponse, errorResponse, corsHeaders } from '.
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  if (!authOk(request, env)) {
+  if (!(await authOk(request, env))) {
     return errorResponse('unauthorized', 401);
   }
 

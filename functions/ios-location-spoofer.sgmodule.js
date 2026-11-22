@@ -1,3 +1,5 @@
+import { deriveConfigKey } from './_utils.js';
+
 /**
  * iOS Location Spoofer Web
  * 
@@ -22,9 +24,11 @@ export async function onRequestGet(context) {
   const host = request.headers.get('host') || url.host;
   const protocol = request.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
   const tVal = url.searchParams.get('token') || '';
+  const configKey = tVal ? await deriveConfigKey(tVal) : '';
 
   content = content.replace(/你的域名/g, host);
   content = content.replace(/你的Token/g, tVal);
+  content = content.replace(/你的ConfigKey/g, configKey);
   
   if (protocol === 'https') {
     content = content.replace(/http:\/\/localhost:8080/g, 'https://' + host);

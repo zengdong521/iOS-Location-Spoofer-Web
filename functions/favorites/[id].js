@@ -11,7 +11,7 @@ import { authOk, jsonResponse, errorResponse, corsHeaders } from '../_utils.js';
 export async function onRequestDelete(context) {
   const { request, env, params } = context;
 
-  if (!authOk(request, env)) {
+  if (!(await authOk(request, env))) {
     return errorResponse('unauthorized', 401);
   }
 
